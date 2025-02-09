@@ -3,6 +3,7 @@ package main
 import (
 	"bufio"
 	"fmt"
+	"log"
 	"os"
 	"strconv"
 	"time"
@@ -56,6 +57,7 @@ func (rb *RingBuffer) IsEmpty() bool {
 }
 
 func source(out chan<- int) {
+	log.Println("Starting source function")
 	scanner := bufio.NewScanner(os.Stdin)
 	fmt.Println("Введите целые числа (для завершения введите 'q'):")
 	for scanner.Scan() {
@@ -74,6 +76,7 @@ func source(out chan<- int) {
 }
 
 func filterNegative(in <-chan int, out chan<- int) {
+	log.Println("Starting filterNegative function")
 	for num := range in {
 		if num >= 0 {
 			out <- num
@@ -83,6 +86,7 @@ func filterNegative(in <-chan int, out chan<- int) {
 }
 
 func filterNonMultiplesOf3(in <-chan int, out chan<- int) {
+	log.Println("Starting filterNonMultiplesOf3 function")
 	for num := range in {
 		if num != 0 && num%3 == 0 {
 			out <- num
@@ -92,6 +96,7 @@ func filterNonMultiplesOf3(in <-chan int, out chan<- int) {
 }
 
 func bufferStage(in <-chan int, out chan<- int) {
+	log.Println("Starting bufferStage function")
 	buffer := NewRingBuffer(bufferSize)
 	ticker := time.NewTicker(flushInterval)
 	defer ticker.Stop()
@@ -123,12 +128,14 @@ func bufferStage(in <-chan int, out chan<- int) {
 }
 
 func consumer(in <-chan int) {
+	log.Println("Starting consumer function")
 	for num := range in {
 		fmt.Printf("Получены данные: %d\n", num)
 	}
 }
 
 func main() {
+	log.Println("Starting main function")
 	ch1 := make(chan int)
 	ch2 := make(chan int)
 	ch3 := make(chan int)
